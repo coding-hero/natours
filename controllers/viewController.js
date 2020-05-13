@@ -30,12 +30,16 @@ exports.renderTourPage = catchAsync(async (req, res, next) => {
 });
 
 exports.renderLoginPage = catchAsync(async (req, res, next) => {
+  if (res.locals.user) return this.renderOverviewPage(req, res, next);
+
   res.status(200).render('login', {
     title: 'Log into your account'
   });
 });
 
 exports.renderSignUpPage = catchAsync(async (req, res, next) => {
+  if (res.locals.user) return this.renderOverviewPage(req, res, next);
+
   res.status(200).render('signup', {
     title: 'Sign up'
   });

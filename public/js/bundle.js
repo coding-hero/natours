@@ -8468,7 +8468,7 @@ var logout = /*#__PURE__*/function () {
             res = _context2.sent;
 
             if (res.data.status === 'success') {
-              location.reload(true);
+              location.assign('/');
             }
 
             _context2.next = 10;
