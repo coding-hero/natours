@@ -11,19 +11,16 @@ const signToken = id =>
     expiresIn: process.env.JWT_EXPIRES_IN
   });
 
-const createAndSendToken = (user, statusCode, res) => {
+const createAndSendToken = (user, statusCode, req, res) => {
   const token = signToken(user._id);
-
-  const cookieOptions = {
+  res.cookie('jwt', token, {
     expires: new Date(
       Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
     ),
+    // In production we set secure cookies to true, then only in https cookie will send!
+    secure: req.secure || req.headers['x-forwarded-proto'] === 'https',
     httpOnly: true // Browser would not be able to access or modify cookie ( only save and send back!)
-  };
-  // In production we set secure cookies to true, then only in https cookie will send!
-  if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
-
-  res.cookie('jwt', token, cookieOptions);
+  });
 
   user.password = undefined;
   user.__v = undefined;
@@ -44,7 +41,7 @@ exports.signup = catchAsync(async (req, res, next) => {
   const url = `${req.protocol}://${req.get('host')}/me`;
   await new Email(newUser, url).sendWelcome();
 
-  createAndSendToken(newUser, 201, res);
+  createAndSendToken(newUser, 201, req, res);
 });
 
 exports.login = catchAsync(async (req, res, next) => {
@@ -61,7 +58,7 @@ exports.login = catchAsync(async (req, res, next) => {
     return next(new AppError('Incorrect email or password', 401));
   }
 
-  createAndSendToken(user, 200, res);
+  createAndSendToken(user, 200, req, res);
 });
 
 exports.logout = (req, res) => {
@@ -206,7 +203,7 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   await user.save();
   // 3) Update passwordChangedAt property for the user
   // 4) Log the user in, send jwt
-  createAndSendToken(user, 200, res);
+  createAndSendToken(user, 200, req, res);
 });
 
 exports.updatePassword = catchAsync(async (req, res, next) => {
@@ -224,5 +221,5 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
   user.passwordConfirm = passwordConfirm;
   await user.save();
   // 4) Log the user in
-  createAndSendToken(user, 200, res);
+  createAndSendToken(user, 200, req, res);
 });

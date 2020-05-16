@@ -38,3 +38,12 @@ process.on('unhandledRejection', err => {
     process.exit(1);
   });
 });
+
+// Heroku send every 24h SIGTERM to close the server
+process.on('SIGTERM', () => {
+  // eslint-disable-next-line no-console
+  console.log('Sigterm signal received!. Shutting down gracefully!');
+  server.close(() => {
+    console.log('Process terminated gracefully !');
+  });
+});

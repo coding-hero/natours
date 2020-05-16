@@ -18,6 +18,8 @@ const viewRouter = require('./routes/viewRoutes');
 const bookingRouter = require('./routes/bookingRoutes');
 
 const app = express();
+// Enable trust proxy for heroku headers
+app.enable('trust proxy');
 
 app.set('view engine', 'pug');
 app.set('views', path.resolve(__dirname, 'views'));
@@ -69,6 +71,7 @@ app.use(
   })
 );
 
+// Compress responses!
 app.use(compression());
 
 // 2) ROUTES
