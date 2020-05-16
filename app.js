@@ -8,6 +8,7 @@ const mongoSanitize = require('express-mongo-sanitize');
 const hpp = require('hpp');
 const cookieParser = require('cookie-parser');
 const compression = require('compression');
+const cors = require('cors');
 
 const globalErrorHandler = require('./controllers/errorController');
 const AppError = require('./utils/appError');
@@ -25,7 +26,16 @@ app.set('view engine', 'pug');
 app.set('views', path.resolve(__dirname, 'views'));
 
 // 1) MIDDLEWARES
-app.use(express.static(path.resolve(__dirname, 'public'))); // Serve static files
+// Enable cross-origin requests
+app.use(cors());
+// For none-simple requests such as put, patch, delete or also
+// requests which send cookies or use none-standard headers, they require a preflight phase!
+// Browsers send options request to check if is safe to send actual request!  ):
+// So we need to send  Access Control Origin Header !
+app.options('*', cors());
+
+// Serve static files
+app.use(express.static(path.resolve(__dirname, 'public')));
 
 app.use(helmet()); // Set secure headers
 
