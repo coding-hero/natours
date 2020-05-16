@@ -30,7 +30,8 @@ exports.renderTourPage = catchAsync(async (req, res, next) => {
 });
 
 exports.renderLoginPage = catchAsync(async (req, res, next) => {
-  if (res.locals.user) return this.renderOverviewPage(req, res, next);
+  if (res.locals.user)
+    return res.redirect(`${req.protocol}://${req.get('host')}/`);
 
   res.status(200).render('login', {
     title: 'Log into your account'
@@ -38,7 +39,8 @@ exports.renderLoginPage = catchAsync(async (req, res, next) => {
 });
 
 exports.renderSignUpPage = catchAsync(async (req, res, next) => {
-  if (res.locals.user) return this.renderOverviewPage(req, res, next);
+  if (res.locals.user)
+    return res.redirect(`${req.protocol}://${req.get('host')}/`);
 
   res.status(200).render('signup', {
     title: 'Sign up'
