@@ -23,7 +23,7 @@ const app = express();
 app.enable('trust proxy');
 
 app.set('view engine', 'pug');
-app.set('views', path.resolve(__dirname, 'views'));
+app.set('views', path.resolve(__dirname, 'views/pages'));
 
 // 1) MIDDLEWARES
 // Enable cross-origin requests
